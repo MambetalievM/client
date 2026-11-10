@@ -1,35 +1,31 @@
-# Компилятор
 CXX = g++
+CXXFLAGS = -std=c++11 -Wall -Wextra -O2
+LDFLAGS_CLIENT = -lcryptopp -lboost_program_options
+LDFLAGS_TEST = -lunittest++ -lcryptopp -lboost_program_options
 
-# Флаги компиляции (стандарт C++17, предупреждения, оптимизация)
-CXXFLAGS = -std=c++17 -Wall -Wextra -O2
-
-# Библиотеки для линковки (Boost и Crypto++)
-LDLIBS = -lboost_program_options -lcryptopp
-
-# Имя итогового исполняемого файла
-TARGET = client
-
-# Автоматический поиск всех .cpp файлов в текущей директории
-SRCS = $(wildcard *.cpp)
-
-# Преобразование имен .cpp в имена .o
+SRCS = interface.cpp data_reader.cpp data_writer.cpp communicator.cpp
 OBJS = $(SRCS:.cpp=.o)
 
-# Цель по умолчанию
-all: $(TARGET)
+MAIN_SRC = main.cpp
+MAIN_OBJ = main.o
+TEST_SRC = tests.cpp
+TEST_OBJ = tests.o
 
-# Линковка исполняемого файла
-$(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDLIBS)
+TARGET_CLIENT = client
+TARGET_TEST = run_tests
 
-# Компиляция каждого .cpp в .o
+all: $(TARGET_CLIENT) $(TARGET_TEST)
+
+$(TARGET_CLIENT): $(OBJS) $(MAIN_OBJ)
+	$(CXX) $(OBJS) $(MAIN_OBJ) -o $@ $(LDFLAGS_CLIENT)
+
+$(TARGET_TEST): $(OBJS) $(TEST_OBJ)
+	$(CXX) $(OBJS) $(TEST_OBJ) -o $@ $(LDFLAGS_TEST)
+
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Очистка сгенерированных файлов
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(MAIN_OBJ) $(TEST_OBJ) $(TARGET_CLIENT) $(TARGET_TEST)
 
-# Указываем, что clean и all - это не файлы
 .PHONY: all clean
