@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -std=c++11 -Wall -Wextra -O2
 LDFLAGS_CLIENT = -lcryptopp -lboost_program_options
-LDFLAGS_TEST = -lunittest++ -lcryptopp -lboost_program_options
+LDFLAGS_TEST = -lUnitTest++ -lcryptopp -lboost_program_options
 
 SRCS = interface.cpp data_reader.cpp data_writer.cpp communicator.cpp
 OBJS = $(SRCS:.cpp=.o)
@@ -22,10 +22,13 @@ $(TARGET_CLIENT): $(OBJS) $(MAIN_OBJ)
 $(TARGET_TEST): $(OBJS) $(TEST_OBJ)
 	$(CXX) $(OBJS) $(TEST_OBJ) -o $@ $(LDFLAGS_TEST)
 
+test: $(TARGET_TEST)
+	./$(TARGET_TEST)
+
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJS) $(MAIN_OBJ) $(TEST_OBJ) $(TARGET_CLIENT) $(TARGET_TEST)
 
-.PHONY: all clean
+.PHONY: all test clean
