@@ -1,0 +1,6 @@
+client
+server_static
+*.o
+result.bin
+*.log
+
